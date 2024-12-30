@@ -217,7 +217,13 @@ exports.deleteEpisode = async (req, res) => {
     }
 
     // Save the updated anime object to the database
-    const updatedAnime = await anime.save();
+    let updatedAnime = await anime.save();
+
+ updatedAnime = await Anime.findByIdAndUpdate(
+      id,
+      { $set: updatedAnime },
+      { new: true, upsert: true }
+    );
 
     res.status(200).json({
       success: true,
