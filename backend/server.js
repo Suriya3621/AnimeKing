@@ -1,7 +1,6 @@
 const express = require("express")
 require('dotenv').config()
 const app = express();
-const PORT = process.env.PORT || 8000;
 const db = require('./config/db.js')
 const cors = require('cors');
 const animeRoutes = require("./routes/AnimeRoutes.js")
@@ -11,6 +10,7 @@ db();
 app.use(cors());
 app.use("/api",animeRoutes);
 
+const PORT = process.env.X_ZOHO_CATALYST_LISTEN_PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

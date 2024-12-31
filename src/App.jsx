@@ -8,6 +8,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import { Routes, Route, Link, Navigate, useNavigate } from "react-router-dom";
 
 import Home from "./Pages/Home";
+import Video from "./Pages/Components/Video";
 import CommunitySupport from "./Pages/Other/CommunitySupport";
 import About from "./Pages/Other/About";
 import Search from "./Pages/Search";
@@ -30,6 +31,7 @@ function App() {
     setSwitchBtn(true);
     navigate("/home");
   };
+
 
   return (
     <div className={`p-0 m-0 ${darkMode ? "dark" : ""}`}>
@@ -118,6 +120,8 @@ function App() {
           <Route path="/search" element={<h1>Search Page</h1>} />
           <Route path="/community-support" element={<CommunitySupport />} />
           <Route path="/about" element={<About/>} />
+          <Route path="/anime/episode/v?" element={<Video/>} />
+          <Route path="*" element={<h1>404 Error</h1>} />
 
           {/* Admin Routes */}
           <Route path="/admin-panel/login" element={<Login />} />
