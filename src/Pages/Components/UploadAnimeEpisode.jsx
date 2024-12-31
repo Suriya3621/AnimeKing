@@ -19,7 +19,7 @@ export default function UploadAnimeEpisode({ toggleUploadModel, id, notifyError,
         fetchAnime()
         toggleUploadModel();
       } catch (error) {
-        console.error("Error uploading episode", error);
+        console.log("Error uploading episode", error);
         notifyError();
       }
     }
@@ -57,11 +57,7 @@ export default function UploadAnimeEpisode({ toggleUploadModel, id, notifyError,
 
   // Send data to backend
   const sendToServer = async (data) => {
-    await axios.post(`${BACKEND_URL}/${id}/episode`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    await axios.post(`${BACKEND_URL}/${id}/episode`, data);
   };
 
   return (
