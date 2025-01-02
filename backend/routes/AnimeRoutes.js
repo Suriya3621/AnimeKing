@@ -1,26 +1,23 @@
-const express = require('express');
+const express = require("express");
+const {
+  createAnime,
+  getAllAnime,
+  getAnimeById,
+  updateAnime,
+  deleteAnime,
+  addEpisodeBySeason,
+  deleteEpisode,
+  searchAnime, // Import the new search function
+} = require("../controllers/AnimeControllers");
+
 const router = express.Router();
-const animeController = require('../controllers/AnimeControllers.js');
 
-// Route to create a new anime
-router.post('/', animeController.createAnime);
-
-// Route to get all anime
-router.get('/', animeController.getAllAnime);
-
-// Route to get a specific anime by ID
-router.get('/:id', animeController.getAnimeById);
-
-// Route to update a specific anime by ID
-router.put('/:id', animeController.updateAnime);
-
-// Route to delete a specific anime by ID
-router.delete('/:id', animeController.deleteAnime);
-
-//Add episode by season
-router.post('/:id/episode', animeController.addEpisodeBySeason);
-
-
-router.delete('/:id/episode', animeController.deleteEpisode);
+router.post("/", createAnime);
+router.get("/", getAllAnime);
+router.get("/:id", getAnimeById);
+router.put("/:id", updateAnime);
+router.delete("/:id", deleteAnime);
+router.post("/:id/season", addEpisodeBySeason);
+router.delete("/:id/episode", deleteEpisode);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
-
+import { IoArrowBack } from "react-icons/io5";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Video = () => {
@@ -100,9 +100,9 @@ const Video = () => {
         <div className="flex justify-between items-center mt-8 max-w-4xl mx-auto">
           <button
             onClick={() => window.history.back()}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600"
+            className="px-6 flex py-2 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600"
           >
-            ⬅️ Back
+            <IoArrowBack className="text-2xl"/> Back
           </button>
           <div className="text-sm text-gray-500">
             <p>
