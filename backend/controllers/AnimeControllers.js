@@ -239,3 +239,41 @@ exports.deleteEpisode = async (req, res) => {
   }
 };
 
+// Search anime
+exports.searchAnime = async (req, res) => {
+  try {
+    const { title, description } = req.query;
+
+    if (!title && !description) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one search query (title or description) is required",
+      });
+    }
+
+    // Build the search conditions dynamically
+    const searchConditions = [];
+    if (title) {
+      searchConditions.push({ title: { $regex: title, $options: "i" } }); // Case-insensitive match for title
+    }
+    if (description) {
+      searchConditions.push({ description: { $regex: description, $options: "i" } }); // Case-insensitive match for description
+    }
+
+    // Search in the title or description fields
+    const animeList = await Anime.find({
+      $or: searchConditions,
+    });
+
+    res.status(200).json({
+      success: true,
+      data: animeList,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Error searching anime",
+      details: error.message,
+    });
+  }
+};

@@ -1,47 +1,51 @@
 import React, { useState } from "react";
+import { storage } from "../../App/Firebase.js";
 import axios from "axios";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function UploadAnimeEpisode({ toggleUploadModel, id, notifyError, notifySuccess, fetchAnime }) {
-  const [uploadType, setUploadType] = useState("url"); // 'url' or 'file'
+  const [uploadType, setUploadType] = useState("url");
   const [season, setSeason] = useState("");
   const [episode, setEpisode] = useState("");
   const [episodeUrl, setEpisodeUrl] = useState("");
   const [episodeFile, setEpisodeFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
-  // Function to handle the episode upload
   const uploadEpisode = async () => {
     if (isValidInput()) {
+      setUploading(true); // Start uploading
       try {
         const episodeData = await prepareEpisodeData();
         await sendToServer(episodeData);
-        notifySuccess();
-        fetchAnime()
+        notifySuccess("Episode uploaded successfully!");
+        fetchAnime();
         toggleUploadModel();
       } catch (error) {
-        console.log("Error uploading episode", error);
-        notifyError();
+        console.error("Error uploading episode", error);
+        notifyError("Failed to upload episode.");
+      } finally {
+        setUploading(false); // Stop uploading
       }
     }
   };
 
-  // Validate inputs
   const isValidInput = () => {
     if (!season || !episode || (uploadType === "url" && !episodeUrl) || (uploadType === "file" && !episodeFile)) {
-      notifyError();
+      notifyError("All fields are required.");
       return false;
     }
     return true;
   };
 
-  // Prepare episode data for submission
   const prepareEpisodeData = async () => {
     let episodeData = {};
     if (uploadType === "url") {
-      episodeData[episode] = episodeUrl; // Store URL under the episode key
+      episodeData[episode] = episodeUrl;
     } else {
-      const fileUrl = await uploadToFirebase(episodeFile); // Assuming you upload to Firebase
-      episodeData[episode] = fileUrl; // Store the Firebase URL
+      const fileUrl = await uploadToFirebase(episodeFile);
+      episodeData[episode] = fileUrl;
     }
     return {
       season: `Season${season}`,
@@ -49,15 +53,20 @@ export default function UploadAnimeEpisode({ toggleUploadModel, id, notifyError,
     };
   };
 
-  // Function to upload the file to Firebase (dummy function, implement your own)
   const uploadToFirebase = async (file) => {
-    // Replace this with your Firebase upload logic
-    return "https://firebase.url/to/your/file.mp4"; // Placeholder URL
+    try {
+      const fileRef = ref(storage, `${file.name}`);
+      await uploadBytes(fileRef, file);
+      const fileUrl = await getDownloadURL(fileRef);
+      return fileUrl;
+    } catch (error) {
+      console.error("Error uploading file to Firebase:", error);
+      throw error;
+    }
   };
 
-  // Send data to backend
   const sendToServer = async (data) => {
-    await axios.post(`${BACKEND_URL}/${id}/episode`, data);
+    await axios.post(`${BACKEND_URL}/${id}/season`, data);
   };
 
   return (
@@ -136,6 +145,9 @@ export default function UploadAnimeEpisode({ toggleUploadModel, id, notifyError,
             </div>
           )}
 
+          {/* Uploading Animation */}
+          {uploading && <div className="text-center text-blue-500 font-semibold mb-4">Uploading...</div>}
+
           {/* Submit and Close Buttons */}
           <div className="flex justify-between mt-6">
             <button
@@ -146,9 +158,12 @@ export default function UploadAnimeEpisode({ toggleUploadModel, id, notifyError,
             </button>
             <button
               onClick={uploadEpisode}
-              className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={uploading}
+              className={`px-6 py-2 font-semibold rounded-md focus:outline-none focus:ring-2 ${
+                uploading ? "bg-gray-400 text-gray-700" : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-500"
+              }`}
             >
-              Upload Episode
+              {uploading ? "Uploading..." : "Upload Episode"}
             </button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -15,19 +16,16 @@ export default function Result() {
 
   const fetchResults = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}`);
-     let data = response.data.data
-     
-      setResults();
-      setLoading(false);
+      const response = await axios.get(`${BACKEND_URL}/search?title=${keyword}`);
+      const data = response.data.data; // Fetch the data
+      setResults(data); // Set the results
+      setLoading(false); // Update loading state
     } catch (err) {
       console.error("Error fetching search results:", err);
-      setError(true);
-      setLoading(false);
+      setError(true); // Update error state
+      setLoading(false); // Update loading state
     }
   };
-
-
 
   useEffect(() => {
     if (keyword) {
@@ -52,7 +50,7 @@ export default function Result() {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-slate-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen p-5 bg-slate-50 rounded-t-3xl dark:bg-slate-900 text-gray-900 dark:text-gray-100">
       <h1 className="text-2xl font-bold mb-4 text-center">Search Results for "{keyword}"</h1>
       {results.length > 0 ? (
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -61,6 +59,7 @@ export default function Result() {
               key={anime._id}
               className="group bg-gray-50 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:-translate-y-1"
             >
+            <Link to={`/anime/${anime._id}`}>
               <img
                 src={anime.thumbnail}
                 alt={`Thumbnail of ${anime.title}`}
@@ -72,6 +71,7 @@ export default function Result() {
                   {anime.description}
                 </p>
               </div>
+              </Link>
             </div>
           ))}
         </div>

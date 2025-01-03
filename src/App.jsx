@@ -118,7 +118,6 @@ function App() {
           <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/home" element={<Home />} />
           <Route path="/anime/:id" element={<ViewAnimePage toggleHome={toggleHome} />} />
-          <Route path="/search" element={<h1>Search Page</h1>} />
           <Route path="/community-support" element={<CommunitySupport />} />
           <Route path="/about" element={<About/>} />
           <Route path="/anime/episode/v?" element={<Video/>} />
