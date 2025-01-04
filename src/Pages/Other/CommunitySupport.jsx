@@ -14,7 +14,7 @@ function JoinDiscord() {
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <a
-        href="https://discord.gg/3KYfrakN"
+        href="https://discord.gg/HkFrRVjm6B"
         target="_blank"
         rel="noopener noreferrer"
         className={`flex items-center gap-3 px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full shadow-md hover:shadow-xl transform transition duration-300 dark:from-purple-600 dark:to-indigo-700 ${hovered ? 'scale-105 animate-pulse' : ''}`}

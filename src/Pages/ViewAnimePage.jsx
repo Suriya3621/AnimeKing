@@ -6,6 +6,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { MdDeleteOutline } from "react-icons/md";
 import UploadAnimeEpisode from "./Components/UploadAnimeEpisode";
 import "react-toastify/dist/ReactToastify.css";
+import { ref, deleteObject } from "firebase/storage";
+import { storage } from "../App/Firebase.js";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -67,6 +69,19 @@ export default function ViewAnimePage({ toggleHome }) {
     );
   }
 
+const deleteEpisode = async (season, episodeKey,file) => {
+  try {
+   const fileRef = ref(storage, file);
+   await axios.delete(`${BACKEND_URL}/${id}/episode`, {
+      data: { season, episodeKey },
+    });
+   await deleteObject(fileRef);
+  
+    fetchAnime(); // Refresh the anime data after deletion
+  } catch (error) {
+    console.error("Error deleting episode:", error);
+  }
+};
   return (
     <div className="p-4 z-20 bg-gray-100 dark:bg-gray-900 text-slate-950 dark:text-slate-50 min-h-screen">
       {uploadModel && (
@@ -144,12 +159,12 @@ export default function ViewAnimePage({ toggleHome }) {
                 <Link to={`/anime/episode/v?id=${anime._id}&season=${expandedSeason}&episode=${episode}`}>
                   Episode-{episode}
                 </Link>
-                  {admin && (
-                    <button>
-                      <MdDeleteOutline className="text-2xl text-red-700" />
-                    </button>
-                  )}
-                </div>
+{admin && (
+  <button onClick={() => deleteEpisode(expandedSeason, episode,anime.video[expandedSeason][episode])}>
+    <MdDeleteOutline className="text-2xl text-red-700" />
+  </button>
+)}
+</div>
               ))}
             </div>
           </div>
