@@ -1,4 +1,34 @@
 const Anime = require('../models/AnimeModels.js');
+const { Client, GatewayIntentBits } = require('discord.js');
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+
+exports.searchSuggestion = async (req, res) => {
+  try {
+    console.log("Fetching search suggestions from Discord...");
+
+    // Log in to Discord with your bot's token
+    await client.login(process.env.DC_BOT);
+
+    // Fetch the channel by ID (replace with your actual channel ID)
+    const channel = await client.channels.fetch(process.env.DC_SEARCH);
+
+    // Fetch the last 100 messages from the channel
+    const messages = await channel.messages.fetch({ limit: 100 });
+
+    // Log the message content for debugging
+    // Send the messages as a response
+    res.status(200).json({
+      success: true,
+      data: messages.map(msg => msg.content),
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Error fetching messages from Discord",
+      details: error.message,
+    });
+  }
+};
 
 // Create a new anime
 exports.createAnime = async (req, res) => {

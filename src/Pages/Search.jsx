@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoMdClose } from "react-icons/io";
+//import axios from 'axios';
 
 export default function Search({ toggleSearch }) {
   const [query, setQuery] = useState("");
