@@ -4,13 +4,18 @@ import './index.css'
 import App from './App.jsx';
 import { ThemeProvider } from "./App/Theme.jsx";
 import { BrowserRouter } from "react-router-dom"
+import { SocketProvider } from "./App/Socket";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <ThemeProvider>
-       <App />
+        <SocketProvider>
+          <App />
+        </SocketProvider>
       </ThemeProvider>
     </BrowserRouter>
   </StrictMode>,
 )
+
+

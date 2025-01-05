@@ -66,12 +66,12 @@ export default function Login() {
                   ? handleBackspace
                   : () => handleButtonClick(item)
               }
-              className={`w-full h-16 flex items-center justify-center text-2xl font-semibold rounded-lg shadow-lg transition-transform transform hover:scale-105 ${
+              className={`w-full h-16 flex items-center justify-center text-2xl font-semibold rounded-lg shadow-lg transition-transform transform ${
                 item === "C"
                   ? "bg-red-500 hover:bg-red-600"
                   : item === "⌫"
                   ? "bg-yellow-500 hover:bg-yellow-600"
-                  : "bg-blue-500 hover:bg-blue-600"
+                  : "bg-blue-500"
               }`}
               aria-label={
                 item === "C"

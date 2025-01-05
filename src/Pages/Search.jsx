@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoMdClose } from "react-icons/io";
-//import axios from 'axios';
+import axios from "axios";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Search({ toggleSearch }) {
   const [query, setQuery] = useState("");
+  const [mockData, setMockData] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
@@ -15,28 +20,49 @@ export default function Search({ toggleSearch }) {
     toggleSearch();
   };
 
-  const fetchSuggestions = (input) => {
-    // Mocked suggestion logic
-    const mockData = ["Naruto", "Attack on Titan", "One Piece", "Demon Slayer"];
-    setSuggestions(
-      mockData.filter((item) =>
-        item.toLowerCase().includes(input.toLowerCase())
-      )
-    );
+  const fetchSuggestions = async (input) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${BACKEND_URL}/suggestion`);
+      setMockData(response.data.data);
+      setSuggestions(
+        response.data.data.filter((item) =>
+          item.toLowerCase().includes(input.toLowerCase())
+        )
+      );
+    } catch (error) {
+      console.error(error);
+      setSuggestions([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    if (query) fetchSuggestions(query);
-    else setSuggestions([]);
+    const delayDebounce = setTimeout(() => {
+      if (query) fetchSuggestions(query);
+      else setSuggestions([]);
+    }, 300);
+    return () => clearTimeout(delayDebounce);
   }, [query]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") toggleSearch();
+      if (e.key === "ArrowDown") {
+        setFocusedIndex((prev) => (prev + 1) % suggestions.length);
+      }
+      if (e.key === "ArrowUp") {
+        setFocusedIndex((prev) => (prev - 1 + suggestions.length) % suggestions.length);
+      }
+      if (e.key === "Enter" && focusedIndex >= 0) {
+        setQuery(suggestions[focusedIndex]);
+        setSuggestions([]);
+      }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [toggleSearch]);
+  }, [focusedIndex, suggestions, toggleSearch]);
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 z-50">
@@ -60,8 +86,13 @@ export default function Search({ toggleSearch }) {
             className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring focus:ring-cyan-400 outline-none mb-4"
             aria-label="Search input"
           />
+          {loading && <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>}
           {suggestions.length > 0 && (
-            <ul className="bg-gray-50 dark:bg-gray-800 rounded-lg border dark:border-gray-700 max-h-40 overflow-y-auto mb-4">
+            <ul
+              className="bg-gray-50 dark:bg-gray-800 rounded-lg border dark:border-gray-700 max-h-40 overflow-y-auto mb-4"
+              aria-live="polite"
+              aria-label="Search suggestions"
+            >
               {suggestions.map((item, index) => (
                 <li
                   key={index}
@@ -69,7 +100,9 @@ export default function Search({ toggleSearch }) {
                     setQuery(item);
                     setSuggestions([]);
                   }}
-                  className="cursor-pointer p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  className={`cursor-pointer p-2 hover:bg-gray-200 dark:hover:bg-gray-700 ${
+                    focusedIndex === index ? "bg-gray-200 dark:bg-gray-700" : ""
+                  }`}
                 >
                   {item}
                 </li>

@@ -55,7 +55,7 @@ export default function UploadAnimeEpisode({ toggleUploadModel, id, notifyError,
 
   const uploadToFirebase = async (file) => {
     try {
-      const fileRef = ref(storage, `${file.name}`);
+      const fileRef = ref(storage, `anime/${file.name}`);
       await uploadBytes(fileRef, file);
       const fileUrl = await getDownloadURL(fileRef);
       return fileUrl;
