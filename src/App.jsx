@@ -6,7 +6,7 @@ import { IoIosSearch } from "react-icons/io";
 import { CiLight } from "react-icons/ci";
 import { IoHomeOutline } from "react-icons/io5";
 import { Routes, Route, Link, Navigate, useNavigate } from "react-router-dom";
-
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import Home from "./Pages/Home";
 import Result from "./Pages/Result";
 import Video from "./Pages/Components/Video";
@@ -36,6 +36,7 @@ function App() {
 
   return (
     <div className={`p-0 m-0 ${darkMode ? "dark" : ""}`}>
+    <SpeedInsights />
       {/* Side Navbar */}
       <div
         className={`fixed z-50 top-0 left-0 h-full w-64 bg-slate-50 dark:bg-gray-800 text-slate-900 dark:text-slate-50 transform ${
