@@ -71,13 +71,13 @@ export default function ViewAnimePage({ toggleHome }) {
 
 const deleteEpisode = async (season, episodeKey,file) => {
   try {
-   const fileRef = ref(storage, file);
    await axios.delete(`${BACKEND_URL}/${id}/episode`, {
       data: { season, episodeKey },
     });
+    fetchAnime(); // Refresh the anime data after deletion
+   const fileRef = ref(storage, file);
    await deleteObject(fileRef);
   
-    fetchAnime(); // Refresh the anime data after deletion
   } catch (error) {
     console.error("Error deleting episode:", error);
   }
