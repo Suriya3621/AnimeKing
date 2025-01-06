@@ -10,6 +10,8 @@ export default function CreateAnime({ fetchAnimes, toggleCloseOfCreateModel }) {
     thumbnail: "",
   });
   const [loading, setLoading] = useState(false);
+  const [thumbnailLoading, setThumbnailLoading] = useState(false);
+  const [thumbnailError, setThumbnailError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,8 +19,22 @@ export default function CreateAnime({ fetchAnimes, toggleCloseOfCreateModel }) {
       ...prevData,
       [name]: value,
     }));
+
+    if (name === "thumbnail") {
+      setThumbnailLoading(true);
+      setThumbnailError("");
+    }
   };
 
+  const handleThumbnailLoad = () => {
+    setThumbnailLoading(false);
+    setThumbnailError("");
+  };
+
+  const handleThumbnailError = () => {
+    setThumbnailLoading(false);
+    setThumbnailError("Invalid thumbnail URL. Please provide a valid image URL.");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +43,6 @@ export default function CreateAnime({ fetchAnimes, toggleCloseOfCreateModel }) {
       alert("Title and description cannot be empty.");
       return;
     }
-
 
     setLoading(true);
     try {
@@ -122,11 +137,23 @@ export default function CreateAnime({ fetchAnimes, toggleCloseOfCreateModel }) {
               <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Thumbnail Preview:
               </p>
-              <img
-                src={formData.thumbnail}
-                alt="Thumbnail Preview"
-                className="w-full h-auto rounded-lg shadow-md"
-              />
+              {thumbnailLoading && (
+                <div className="flex justify-center items-center">
+                  <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+              {!thumbnailLoading && !thumbnailError && (
+                <img
+                  src={formData.thumbnail}
+                  alt="Thumbnail Preview"
+                  className="w-full h-auto rounded-lg shadow-md"
+                  onLoad={handleThumbnailLoad}
+                  onError={handleThumbnailError}
+                />
+              )}
+              {thumbnailError && (
+                <p className="text-red-500 text-sm mt-2">{thumbnailError}</p>
+              )}
             </div>
           )}
 
